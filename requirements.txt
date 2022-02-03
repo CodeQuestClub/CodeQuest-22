@@ -1,0 +1,4 @@
+arcade>=2.5.7
+pyyaml>=5.4.1
+pyqtree>=1.0.0
+numpy

@@ -97,7 +97,7 @@ def main():
 
 
     if not is_replay:
-        server_process = Process(target=start_server, args=[map_path, replay_path, server_queue, visual_queue, error_queue, client_queues])
+        server_process = Process(target=start_server, args=[map_path, replay_path, server_queue, visual_queue, error_queue, client_queues, args.visual])
         client_processes = [
             Process(target=run_client, args=[full_paths[i], *client_queues[i], error_queue])
             for i in range(len(full_paths))

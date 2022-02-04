@@ -12,12 +12,12 @@ import numpy as np
 
 
 
-def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, client_queues):
+def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, client_queues, is_visual):
     try:
         GlobalMap.load_map(map_path)
         spindex = Index(bbox=(-0.5, -0.5, GlobalMap.h - 0.5, GlobalMap.w - 0.5))
         ReplayManager.set_output(replay_path)
-        NetworkManager.set_queues(visual_queue, recv_queue, client_queues)
+        NetworkManager.set_queues(visual_queue, recv_queue, client_queues, is_visual)
 
         # Send initial map data.
         NetworkManager.send_internal_obj({
@@ -374,6 +374,8 @@ def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, c
                     "indicies": [i for i in range(len(hill_score)) if hill_score[i] == max(hill_score)],
                 })
                 ReplayManager.close()
+                if not is_visual:
+                    error_queue.put("server")
                 return
             if len(defeated) - sum(defeated) <= 1:
                 if sum(defeated) == len(defeated) - 1 and max(hill_score) != max(hill_score[i] for i in range(len(hill_score)) if not defeated[i]):
@@ -386,6 +388,8 @@ def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, c
                         "indicies": [i for i in range(len(hill_score)) if hill_score[i] == max(hill_score)],
                     })
                     ReplayManager.close()
+                    if not is_visual:
+                        error_queue.put("server")
                     return
     except Exception as e:
         error_queue.put([e, format_exc()])

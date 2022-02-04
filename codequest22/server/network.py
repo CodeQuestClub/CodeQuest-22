@@ -13,10 +13,11 @@ class NetworkManager:
     RECV, SEND = range(2)
 
     @classmethod
-    def set_queues(cls, visual_queue, recv_queue, queues):
+    def set_queues(cls, visual_queue, recv_queue, queues, is_visual):
         cls.visual_queue = visual_queue
         cls.recv_queue = recv_queue
         cls.queues = queues
+        cls.is_visual = is_visual
 
     @classmethod
     def send_internal_obj(cls, obj, visual=True, replay=True):
@@ -27,6 +28,7 @@ class NetworkManager:
 
     @classmethod
     def wait_visual_response(cls):
+        if not cls.is_visual: return
         res = cls.recv_queue.get()
         if res == "Resume":
             return

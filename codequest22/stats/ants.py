@@ -1,22 +1,24 @@
+import os
+
 class Worker:
-    COST = 20
-    HP = 10
-    SPEED = 3
-    TRIPS = 3
-    WORK_RATE = 1
-    ENCUMBERED_RATE = 0.3
+    COST = float(os.environ.get("WORKER_COST", "20"))
+    HP = float(os.environ.get("WORKER_HP", "10"))
+    SPEED = float(os.environ.get("WORKER_SPEED", "3"))
+    TRIPS = float(os.environ.get("WORKER_TRIPS", "3"))
+    WORK_RATE = float(os.environ.get("WORK_RATE", "1"))
+    ENCUMBERED_RATE = float(os.environ.get("WORKER_ENCUMBERED_RATE", "0.3"))
 
 class Fighter:
-    COST = 40
-    HP = 15
-    SPEED = 2
-    ATTACK = 3.5
-    RANGE = 1.5
-    NUM_ATTACKS = 2
-    LIFESPAN = 30
+    COST = float(os.environ.get("FIGHTER_COST", "40"))
+    HP = float(os.environ.get("FIGHTER_HP", "15"))
+    SPEED = float(os.environ.get("FIGHTER_SPEED", "2"))
+    ATTACK = float(os.environ.get("FIGHTER_ATTACK", "3.5"))
+    RANGE = float(os.environ.get("FIGHTER_RANGE", "1.5"))
+    NUM_ATTACKS = float(os.environ.get("FIGHTER_NUM_ATTACKS", "2"))
+    LIFESPAN = float(os.environ.get("FIGHTER_LIFESPAN", "30"))
 
 class Settler:
-    COST = 30
-    HP = 10
-    SPEED = 1.5
-    LIFESPAN = 40
+    COST = float(os.environ.get("SETTLER_COST", "30"))
+    HP = float(os.environ.get("SETTLER_HP", "10"))
+    SPEED = float(os.environ.get("SETTLER_SPEED", "1.5"))
+    LIFESPAN = float(os.environ.get("SETTLER_LIFESPAN", "40"))

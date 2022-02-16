@@ -80,7 +80,7 @@ class DepositEvent(Event):
         self.cur_energy = cur_energy
         self.player_index = ant.player_index
         self.ant_id = ant.id
-        self.energy_amount = ant.encumbered_energy
+        self.energy_amount = int(ant.encumbered_energy)
         self.total_energy = min(cur_energy + self.energy_amount, stats.general.MAX_ENERGY_STORED)
 
     def get_args(self):

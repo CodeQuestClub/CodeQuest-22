@@ -179,9 +179,11 @@ def handle_events(events):
                 total_ants += 1
         elif isinstance(ev, MoveEvent):
             pindex, key, pos = ev.player_index, ev.ant_id, ev.position
+            if key not in ants[pindex]: continue
             ants[pindex][key].position = pos
         elif isinstance(ev, ProductionEvent):
             if ev.player_index == my_index:
+                if ev.ant_id not in ants[ev.player_index]: continue
                 req.append(GoalRequest(ev.ant_id, spawns[my_index]))
                 ant = ants[my_index][ev.ant_id]
                 if ant.cur_allocation in production:
@@ -189,6 +191,7 @@ def handle_events(events):
                     ant.cur_allocation = None
         elif isinstance(ev, DepositEvent):
             if ev.player_index == my_index:
+                if ev.ant_id not in ants[ev.player_index]: continue
                 req.append(GoalRequest(ev.ant_id, allocate_production_zone(ants[ev.player_index][ev.ant_id])))
                 my_energy += ev.energy_amount
         elif isinstance(ev, ZoneActiveEvent):

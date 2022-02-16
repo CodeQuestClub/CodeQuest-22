@@ -320,6 +320,7 @@ def handle_events(events):
                 ants[ev.player_index][ev.ant_id] = Ant(ev.ant_type, getattr(ev, "ticks_left", 1000000), ev.hp, ev.position, ev.cost)
         elif isinstance(ev, MoveEvent):
             pindex, key, pos = ev.player_index, ev.ant_id, ev.position
+            if ev.ant_id not in ants[ev.player_index]: continue
             ipos = (round(ants[pindex][key].position[0]), round(ants[pindex][key].position[1]))
             ants[pindex][key].previous_positions.append(ipos)
             ants[pindex][key].position = pos
@@ -350,6 +351,7 @@ def handle_events(events):
                         last_occupied[pindex][prod] = cur_tick
         elif isinstance(ev, ProductionEvent):
             if ev.player_index == my_index:
+                if ev.ant_id not in ants[ev.player_index]: continue
                 req.append(GoalRequest(ev.ant_id, spawns[my_index]))
                 ant = ants[my_index][ev.ant_id]
                 if ant.cur_allocation in production:
@@ -357,6 +359,7 @@ def handle_events(events):
                     ant.cur_allocation = None
         elif isinstance(ev, DepositEvent):
             if ev.player_index == my_index:
+                if ev.ant_id not in ants[ev.player_index]: continue
                 req.append(GoalRequest(ev.ant_id, allocate_production_zone(ants[ev.player_index][ev.ant_id])))
                 my_energy += ev.energy_amount
         elif isinstance(ev, ZoneActiveEvent):

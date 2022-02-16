@@ -194,19 +194,56 @@ class ScreenManager(arcade.Window):
                 before = []
                 extra = []
                 capture = False
+                cx, cy = self.translate(x, y)
                 if c == ".":
                     a, b = random.choice([
                         (17*0, 17*0),
                         (17*0, 17*1),
                     ])
                 elif c == "R":
-                    a, b = (17*0, 17*2)
+                    a, b = random.choice([
+                        (17*0, 17*0),
+                        (17*0, 17*1),
+                    ])
+                    self.after_grid.append(arcade.Sprite(
+                        "codequest22/visual/sprites/red-base.png",
+                        center_x = cx,
+                        center_y = cy,
+                        scale = self.scaling * 24/512
+                    ))
                 elif c == "B":
-                    a, b = (17*0, 17*3)
+                    a, b = random.choice([
+                        (17*0, 17*0),
+                        (17*0, 17*1),
+                    ])
+                    self.after_grid.append(arcade.Sprite(
+                        "codequest22/visual/sprites/blue-base.png",
+                        center_x = cx,
+                        center_y = cy,
+                        scale = self.scaling * 24/512
+                    ))
                 elif c == "Y":
-                    a, b = (17*0, 17*4)
+                    a, b = random.choice([
+                        (17*0, 17*0),
+                        (17*0, 17*1),
+                    ])
+                    self.after_grid.append(arcade.Sprite(
+                        "codequest22/visual/sprites/yellow-base.png",
+                        center_x = cx,
+                        center_y = cy,
+                        scale = self.scaling * 24/512
+                    ))
                 elif c == "G":
-                    a, b = (17*0, 17*5)
+                    a, b = random.choice([
+                        (17*0, 17*0),
+                        (17*0, 17*1),
+                    ])
+                    self.after_grid.append(arcade.Sprite(
+                        "codequest22/visual/sprites/green-base.png",
+                        center_x = cx,
+                        center_y = cy,
+                        scale = self.scaling * 24/512
+                    ))
                 elif c == "W":
                     before.append(random.choice([
                         (17*0, 17*0),
@@ -276,19 +313,23 @@ class ScreenManager(arcade.Window):
                         # Fallback, show errors.
                         a, b = (9*17, 3*17)
                 elif c == "F":
-                    extra.append((17*0, 17*6))
+                    a, b = random.choice([
+                        (17*0, 17*0),
+                        (17*0, 17*1),
+                    ])
+                    self.after_grid.append(arcade.Sprite(
+                        "codequest22/visual/sprites/normal.png",
+                        center_x = cx,
+                        center_y = cy,
+                        scale = self.scaling * 16/512
+                    ))
                     for i2, t in enumerate(GameStateHandler.energy_info):
                         if t.position == (y, x):
-                            cx, cy = self.translate(x, y)
                             self.active_tile[i2].append(arcade.Sprite(
-                                "codequest22/visual/sprites/full_tileset.png", 
-                                image_x=17*1,
-                                image_y=17*6,
-                                image_width=16, 
-                                image_height=16, 
-                                center_x=cx, 
-                                center_y=cy,
-                                scale=self.SIDELENGTH / 16,
+                                "codequest22/visual/sprites/super.png",
+                                center_x = cx,
+                                center_y = cy,
+                                scale = self.scaling * 16/512
                             ))
                             break
                     else:
@@ -374,7 +415,6 @@ class ScreenManager(arcade.Window):
                     if a == None:
                         # Fallback, show errors.
                         a, b = (4*17, 3*17)
-                cx, cy = self.translate(x, y)
                 for p, l in before:
                     s = arcade.Sprite(
                         "codequest22/visual/sprites/full_tileset.png", 
@@ -452,6 +492,7 @@ class ScreenManager(arcade.Window):
         self.ui_player_list_hill_icon = arcade.SpriteList(is_static=True)
         self.ui_player_list_energy_icon = arcade.SpriteList(is_static=True)
         self.ant_mapping = [{} for _ in range(len(images))]
+        names = ["red", "blue", "yellow", "green"]
         for x, image in enumerate(images):
             spritepath = resolve_path(image, "test_bots/img/hello.png")
             # UI
@@ -461,14 +502,10 @@ class ScreenManager(arcade.Window):
             ui_sprite.width = ui_sprite.height * ratio
             ui_sprite.center_x = self.player_ui_main_top_left[x][0] + self.player_ui_main_width / 2
             ui_sprite.center_y = self.player_ui_main_top_left[x][1] - self.player_sprite_height / 2
-            hill = arcade.Sprite("codequest22/visual/sprites/full_tileset.png", 
-                image_x=0, 
-                image_y=17*(7 + x), 
-                image_width=16, 
-                image_height=16, 
+            hill = arcade.Sprite(f"codequest22/visual/sprites/{names[x]}-base.png", 
                 center_x=self.player_ui_main_top_left[x][0] + 10 * self.scaling, 
                 center_y=self.player_ui_main_top_left[x][1] - self.panel_height * 0.64,
-                scale=self.scaling,
+                scale=self.scaling * 16/512,
             )
             energy = arcade.Sprite("codequest22/visual/sprites/full_tileset.png", 
                 image_x=0, 

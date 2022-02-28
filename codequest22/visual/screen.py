@@ -765,6 +765,16 @@ class ScreenManager(arcade.Window):
                 GameStateHandler.SPEED_MODE = "NORMAL"
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
+        if self.show_winner:
+            # Tabs
+            tab_left = self.s_width/2-self.winner_box_total_width/2
+            tab_right = self.s_width/2+self.winner_box_total_width/2
+            tab_bot = self.s_height/2+self.winner_box_total_height/2
+            tab_top = self.s_height/2+self.winner_box_total_height/2+self.tab_height
+            if tab_left <= x <= tab_right and tab_bot <= y <= tab_top:
+                index = min((x - tab_left) // self.tab_width, len(self.tab_texts))
+                self.set_tab(int(index))
+            return
         gx, gy = self.inverse_translate(x, y)
         if 0 <= gx < len(self.map_data[0]) and 0 <= gy < len(self.map_data):
             if button == arcade.MOUSE_BUTTON_LEFT:
@@ -858,12 +868,25 @@ class ScreenManager(arcade.Window):
             ))
         self.duration_backing_bar = arcade.create_rectangle_filled(self.L_MARG + self.PLAYABLE_WIDTH / 2, self.s_height - 5 * self.scaling - (self.T_MARG - 10 * self.scaling) /2, self.PLAYABLE_WIDTH * 0.9, (self.T_MARG - 10 * self.scaling), (10, 10, 10))
         self.show_winner = False
+        self.winner_tab = 0
 
     def draw_player_ui_main_under(self, hill, energy, health):
         for x in range(len(energy)):
             arcade.draw_text("W", self.player_ui_main_top_left[x][0] + 15 * self.scaling, self.player_ui_main_top_left[x][1] - self.panel_height*0.8, font_size=11 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="center", width=16 * self.scaling, anchor_y="center")
             arcade.draw_text("F", self.player_ui_main_top_left[x][0] + 15 * self.scaling, self.player_ui_main_top_left[x][1] - self.panel_height*0.5, font_size=11 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="center", width=16 * self.scaling, anchor_y="center")
             arcade.draw_text("S", self.player_ui_main_top_left[x][0] + 15 * self.scaling, self.player_ui_main_top_left[x][1] - self.panel_height*0.2, font_size=11 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="center", width=16 * self.scaling, anchor_y="center")
+
+    def set_tab(self, tab_index):
+        self.winner_tab = tab_index
+        self.winner_tabs = arcade.ShapeElementList()
+        for i in range(len(self.tab_texts)):
+            self.winner_tabs.append(arcade.create_rectangle(
+                self.s_width/2 + self.tab_width*(1 + 2*i)/2 - self.winner_box_total_width/2,
+                self.s_height/2 + 120 * self.scaling + self.tab_height/2,
+                self.tab_width,
+                self.tab_height,
+                (30, 30, 30, 255) if i != tab_index else (90, 90, 90, 255)
+            ))
 
     def draw_player_ui_main(self, hill, energy, health):
         self.player_ui_main_shapes.draw()
@@ -904,28 +927,168 @@ class ScreenManager(arcade.Window):
             arcade.draw_text(f"{GameStateHandler.cur_tick}/{stats.general.SIMULATION_TICKS}", self.L_MARG + self.PLAYABLE_WIDTH * 0.125, self.s_height - 5 * self.scaling - (self.T_MARG - 10 * self.scaling) /2, font_size=14 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="center", width=self.PLAYABLE_WIDTH * 0.75, anchor_y="center")
         if self.show_winner:
             self.winner_bg.draw()
-            arcade.draw_text(
-                self.winner_text, 
-                self.s_width/2,
-                self.s_height/2 - 100 * self.scaling,
-                font_size = self.scaling * 12,
-                anchor_x = "center",
-            )
-            self.winner_graph_bg.draw()
-            for line in self.winner_lines:
-                line.draw()
+            if self.winner_tab == 0:
+                arcade.draw_text(
+                    self.winner_text, 
+                    self.s_width/2,
+                    self.s_height/2 - 100 * self.scaling,
+                    font_size = self.scaling * 12,
+                    anchor_x = "center",
+                )
+                self.winner_graph_bg.draw()
+                for line in self.winner_lines:
+                    line.draw()
+            elif self.winner_tab == 1:
+                name_index = ["Red", "Blue", "Yellow", "Green"]
+                arcade.draw_text(
+                    "Most aggressive - Fighter ant ratio",
+                    self.s_width/2 - self.winner_box_total_width/2 + 10 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 30 * self.scaling,
+                    font_size=self.scaling * 12,
+                )
+                aggr = [(f, i) for i, f in enumerate(GameStateHandler.summary["misc"]["aggressive"]["ratio"])]
+                aggr.sort()
+                aggr_string = ", ".join(f"{name_index[i]}: {int(f * 100)}%" for f, i in aggr[::-1])
+                arcade.draw_text(
+                    aggr_string,
+                    self.s_width/2 + self.winner_box_total_width/2 - 10 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 50 * self.scaling,
+                    font_size=self.scaling * 9,
+                    anchor_x="right",
+                )
+                arcade.draw_text(
+                    "Marathon runner - Highest average travelled",
+                    self.s_width/2 - self.winner_box_total_width/2 + 10 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 80 * self.scaling,
+                    font_size=self.scaling * 12,
+                )
+                marathon = [(f, i) for i, f in enumerate(GameStateHandler.summary["misc"]["marathon"]["avg"])]
+                marathon.sort()
+                marathon_string = ", ".join(f"{name_index[i]}: {f:.1f}m" for f, i in marathon[::-1])
+                arcade.draw_text(
+                    marathon_string,
+                    self.s_width/2 + self.winner_box_total_width/2 - 10 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 100 * self.scaling,
+                    font_size=self.scaling * 9,
+                    anchor_x="right",
+                )
+                arcade.draw_text(
+                    "Holding out - Highest stored energy",
+                    self.s_width/2 - self.winner_box_total_width/2 + 10 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 130 * self.scaling,
+                    font_size=self.scaling * 12,
+                )
+                waiting = [(f, i) for i, f in enumerate(GameStateHandler.summary["misc"]["waiting"]["max_energy"])]
+                waiting.sort()
+                waiting_string = ", ".join(f"{name_index[i]}: {int(f)}E" for f, i in waiting[::-1])
+                arcade.draw_text(
+                    waiting_string,
+                    self.s_width/2 + self.winner_box_total_width/2 - 10 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 150 * self.scaling,
+                    font_size=self.scaling * 9,
+                    anchor_x="right",
+                )
+                arcade.draw_text(
+                    "Stayin Alive - Highest old age ratio",
+                    self.s_width/2 - self.winner_box_total_width/2 + 10 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 180 * self.scaling,
+                    font_size=self.scaling * 12,
+                )
+                alive = [(f, i) for i, f in enumerate(GameStateHandler.summary["misc"]["alive"]["pct"])]
+                alive.sort()
+                alive_string = ", ".join(f"{name_index[i]}: {100*f:.1f}%" for f, i in alive[::-1])
+                arcade.draw_text(
+                    alive_string,
+                    self.s_width/2 + self.winner_box_total_width/2 - 10 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 200 * self.scaling,
+                    font_size=self.scaling * 9,
+                    anchor_x="right",
+                )
+            else:
+                arcade.draw_text(
+                    "Workers",
+                    self.s_width/2 - self.winner_box_total_width/2 + 10 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 30 * self.scaling,
+                    font_size=self.scaling * 12,
+                )
+                arcade.draw_text(
+                    f"Spawned: {GameStateHandler.summary['ants']['worker'][self.winner_tab-2]['spawned']}",
+                    self.s_width/2 - self.winner_box_total_width/2 + 30 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 50 * self.scaling,
+                    font_size=self.scaling * 11,
+                )
+                arcade.draw_text(
+                    f"Deposited: {GameStateHandler.summary['ants']['worker'][self.winner_tab-2]['total_deposited']}E",
+                    self.s_width/2 - self.winner_box_total_width/2 + 30 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 65 * self.scaling,
+                    font_size=self.scaling * 11,
+                )
+                arcade.draw_text(
+                    "Fighters",
+                    self.s_width/2 - self.winner_box_total_width/2 + 10 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 90 * self.scaling,
+                    font_size=self.scaling * 12,
+                )
+                arcade.draw_text(
+                    f"Spawned: {GameStateHandler.summary['ants']['fighter'][self.winner_tab-2]['spawned']}",
+                    self.s_width/2 - self.winner_box_total_width/2 + 30 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 110 * self.scaling,
+                    font_size=self.scaling * 11,
+                )
+                arcade.draw_text(
+                    f"Kills: {GameStateHandler.summary['ants']['fighter'][self.winner_tab-2]['kills']}",
+                    self.s_width/2 - self.winner_box_total_width/2 + 30 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 125 * self.scaling,
+                    font_size=self.scaling * 11,
+                )
+                arcade.draw_text(
+                    "Settlers",
+                    self.s_width/2 - self.winner_box_total_width/2 + 10 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 150 * self.scaling,
+                    font_size=self.scaling * 12,
+                )
+                arcade.draw_text(
+                    f"Spawned: {GameStateHandler.summary['ants']['settler'][self.winner_tab-2]['spawned']}",
+                    self.s_width/2 - self.winner_box_total_width/2 + 30 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 170 * self.scaling,
+                    font_size=self.scaling * 11,
+                )
+                arcade.draw_text(
+                    f"Points: {GameStateHandler.summary['ants']['settler'][self.winner_tab-2]['points']}H",
+                    self.s_width/2 - self.winner_box_total_width/2 + 30 * self.scaling,
+                    self.s_height/2 + self.winner_box_total_height/2 - 185 * self.scaling,
+                    font_size=self.scaling * 11,
+                )
+            self.winner_tabs.draw()
+            for i, text in enumerate(self.tab_texts):
+                arcade.draw_text(
+                    text,
+                    self.s_width/2 + self.tab_width*(1 + 2*i)/2 - self.winner_box_total_width/2,
+                    self.s_height/2 + 120 * self.scaling + self.tab_height/2,
+                    color=(255, 255, 255, 255),
+                    font_size=self.scaling * 12,
+                    anchor_x="center"
+                )
 
     def show_winner_ui(self, indicies):
         self.show_winner = True
+        self.winner_box_total_width = 360 * self.scaling
+        self.winner_box_total_height = 240 * self.scaling
         self.winner_bg = arcade.create_rectangle(
             self.s_width/2, 
             self.s_height/2, 
-            240 * self.scaling, 
-            240 * self.scaling, 
+            self.winner_box_total_width,
+            self.winner_box_total_height,
             (50, 50, 50, 180)
         )
+        self.winner_tabs = arcade.ShapeElementList()
+        self.tab_width = self.winner_box_total_width / (len(GameStateHandler.energy) + 2)
+        self.tab_height = 40 * self.scaling
         name_index = ["Red", "Blue", "Yellow", "Green"]
         names = [name_index[i] for i in indicies]
+        self.tab_texts = ["Graph", "Misc"] + name_index[:len(GameStateHandler.energy)]
+        self.set_tab(0)
+
         if len(names) == 0:
             self.winner_text = "Draw!"
         elif len(names) == 1:

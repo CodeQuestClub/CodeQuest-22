@@ -1,6 +1,7 @@
 import arcade
 from codequest22.server.ant import AntTypes
 from codequest22.server.events import *
+from codequest22.server.summarise_game import GameSummariser
 
 from codequest22.visual.game_input import get_input_maybe, send, use_queue, get_input_wait, use_replay, is_replay
 
@@ -115,6 +116,20 @@ class GameStateHandler:
                 elif res["type"] == "winner":
                     indicies = res["indicies"]
                     cls.CURRENT_MODE = cls.MODE_STOPPED
+                    # Wait for the replay file to be closed, so we can open it.
+                    failures = 0
+                    while True:
+                        try:
+                            replay = open(cls.replay_path, "r")
+                            replay.close()
+                            break
+                        except IOError:
+                            if failures > 30:
+                                raise ValueError("Replay file did not close.")
+                            failures += 1
+                            import time
+                            time.sleep(0.02)
+                    cls.summary = GameSummariser.get_results(cls.replay_path)
                     cls.sm.show_winner_ui(indicies)
                     cls.sm.playGameCompleteSound()
                 cls.last_message = cls.c_time
@@ -149,6 +164,7 @@ def run_visual(recv_queue, send_queue, error_queue, is_replay=False, replay_path
             use_queue(recv_queue, send_queue)
 
         GameStateHandler.init()
+        GameStateHandler.replay_path = replay_path
         arcade.run()
         error_queue.put("visual")
     except CleanExit:

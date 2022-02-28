@@ -106,7 +106,7 @@ def main():
         visual_process = None
         if args.visual:
             from codequest22.visual import run_visual
-            visual_process = Process(target=run_visual, args=[visual_queue, server_queue, error_queue], daemon=True)
+            visual_process = Process(target=run_visual, args=[visual_queue, server_queue, error_queue, False, replay_path], daemon=True)
 
         try:
             server_process.start()

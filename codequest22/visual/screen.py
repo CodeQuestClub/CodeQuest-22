@@ -35,6 +35,36 @@ class AntShape:
         self.shape_list.angle = self.angle
         self.shape_list.draw()
 
+class AntCard(arcade.AnimatedTimeBasedSprite):
+
+    def __init__(self, pos, ant_type, team_name, distance=20, scale=0.02):
+        super().__init__(scale=scale)
+        self.start_pos = [pos[0] - distance, pos[1]]
+        self.mid_pos = [pos[0], pos[1]]
+        self.current_pos = self.start_pos
+        self.forwards = True
+        self.angle = 0
+        self.center_x, self.center_y = self.start_pos
+        tex = arcade.load_texture(resolve_path(f"codequest22/visual/sprites/cards/{team_name}-{ant_type}.jpg"))
+        self.frames.append(arcade.AnimationKeyframe(0, 100, tex))
+
+    def update_animation(self, dt=1/60):
+        res = super().update_animation(delta_time=dt)
+        self.change_y = 0
+        self.current_pos = [self.center_x, self.center_y]
+        if self.current_pos[0] >= self.mid_pos[0]:
+            self.forwards = False
+            self.change_x = 0
+            self.center_x = self.mid_pos[0]
+        if self.forwards:
+            self.change_x = max(0.5, pow(self.mid_pos[0] - self.current_pos[0], 1.3)//25)
+            return res
+        self.alpha = max(self.alpha - 10, 0)
+        if self.alpha == 0:
+            self.remove_from_sprite_lists()
+        return res
+
+
 class Ant(arcade.AnimatedTimeBasedSprite):
 
     def __init__(self, pos, c, scale=1):
@@ -114,24 +144,40 @@ class ScreenManager(arcade.Window):
     def spawnAnt(self, ant):
 
         pos = self.translate(*ant.position)
-        sprite = Ant(pos, ant.color, self.scaling * 0.5)
+        sprite = Ant(pos, ant.color, self.scaling * 0.015)
         sprite.goal = ant.goal
         sprite.path = ant.path
+        col_map = ["red", "blue", "yellow", "green"]
         if isinstance(ant, AntTypes.get_class(AntTypes.WORKER)):
             sprite_strings = [
-                f"sprites/ant/worker_proto_{ant.player_index}_0.png",
-                f"sprites/ant/worker_proto_{ant.player_index}_1.png",
+                f"sprites/ant/{col_map[ant.player_index]}-settler.png",
+                f"sprites/ant/{col_map[ant.player_index]}-settler2.png",
             ]
+            pos = [
+                self.player_ui_main_top_left[ant.player_index][0] + 23 * self.scaling, 
+                self.player_ui_main_top_left[ant.player_index][1] - self.panel_height*0.8
+            ]
+            self.ant_list.append(AntCard(pos, "worker", col_map[ant.player_index], distance=60))
         elif isinstance(ant, AntTypes.get_class(AntTypes.FIGHTER)):
             sprite_strings = [
-                f"sprites/ant/fighter_proto_{ant.player_index}_0.png",
-                f"sprites/ant/fighter_proto_{ant.player_index}_1.png",
+                f"sprites/ant/{col_map[ant.player_index]}-fighter.png",
+                f"sprites/ant/{col_map[ant.player_index]}-fighter2.png",
             ]
+            pos = [
+                self.player_ui_main_top_left[ant.player_index][0] + 23 * self.scaling, 
+                self.player_ui_main_top_left[ant.player_index][1] - self.panel_height*0.5
+            ]
+            self.ant_list.append(AntCard(pos, "fighter", col_map[ant.player_index], distance=60))
         elif isinstance(ant, AntTypes.get_class(AntTypes.SETTLER)):
             sprite_strings = [
-                f"sprites/ant/settler_proto_{ant.player_index}_0.png",
-                f"sprites/ant/settler_proto_{ant.player_index}_1.png",
+                f"sprites/ant/{col_map[ant.player_index]}-settler.png",
+                f"sprites/ant/{col_map[ant.player_index]}-settler2.png",
             ]
+            pos = [
+                self.player_ui_main_top_left[ant.player_index][0] + 23 * self.scaling, 
+                self.player_ui_main_top_left[ant.player_index][1] - self.panel_height*0.2
+            ]
+            self.ant_list.append(AntCard(pos, "settler", col_map[ant.player_index], distance=60))
         for string in sprite_strings:
             tex = arcade.load_texture(resolve_path(string))
             sprite.frames.append(arcade.AnimationKeyframe(0, 200, tex))
@@ -500,10 +546,10 @@ class ScreenManager(arcade.Window):
             ratio = ui_sprite.width / ui_sprite.height
             ui_sprite.height = self.player_sprite_height
             ui_sprite.width = ui_sprite.height * ratio
-            ui_sprite.center_x = self.player_ui_main_top_left[x][0] + self.player_ui_main_width / 2
+            ui_sprite.center_x = self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.75
             ui_sprite.center_y = self.player_ui_main_top_left[x][1] - self.player_sprite_height / 2
             hill = arcade.Sprite(f"codequest22/visual/sprites/{names[x]}-base.png", 
-                center_x=self.player_ui_main_top_left[x][0] + 10 * self.scaling, 
+                center_x=self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.5, 
                 center_y=self.player_ui_main_top_left[x][1] - self.panel_height * 0.64,
                 scale=self.scaling * 16/512,
             )
@@ -512,7 +558,7 @@ class ScreenManager(arcade.Window):
                 image_y=17*6, 
                 image_width=16, 
                 image_height=16, 
-                center_x=self.player_ui_main_top_left[x][0] + 10 * self.scaling, 
+                center_x=self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.5, 
                 center_y=self.player_ui_main_top_left[x][1] - self.panel_height * 0.84,
                 scale=self.scaling,
             )
@@ -664,6 +710,7 @@ class ScreenManager(arcade.Window):
         arcade.start_render()
         if self.grid_bg is not None:
             self.grid_bg.draw()
+        self.draw_player_ui_main_under(GameStateHandler.hill, GameStateHandler.energy, GameStateHandler.health)
         for i in range(len(GameStateHandler.active_zones)):
             if GameStateHandler.active_zones[i]:
                 self.active_grid_bg[i].draw()
@@ -745,12 +792,12 @@ class ScreenManager(arcade.Window):
 
     """UI Components"""
     def setup_player_ui_main(self, n_players):
-        self.PLAYER_UI_MAIN_Y_MARGIN = 30 * self.scaling
+        self.PLAYER_UI_MAIN_Y_MARGIN = 20 * self.scaling
         self.PLAYER_UI_MAIN_X_MARGIN = 10 * self.scaling
         base_height = 160 * self.scaling
         m1 = max(1, n_players - 1)
         self.player_ui_main_width = max(50 * self.scaling, self.s_width/6) - self.PLAYER_UI_MAIN_X_MARGIN
-        self.top_ui_size = min(self.s_height * 0.8, base_height * n_players + 15 * m1 * self.scaling)
+        self.top_ui_size = min(self.s_height * 0.9, base_height * n_players + 20 * m1 * self.scaling)
         self.panel_margins = max(10 * self.scaling, (self.top_ui_size - base_height * n_players) / m1)
         self.panel_height = (self.top_ui_size - self.panel_margins * m1) / n_players
         self.player_ui_main_shapes = arcade.ShapeElementList()
@@ -782,15 +829,48 @@ class ScreenManager(arcade.Window):
                 self.scaling * 4,
                 (255, 0, 0, 255)
             ))
+            self.player_ui_main_shapes.append(arcade.create_rectangle(
+                self.player_ui_main_top_left[x][0] + 23 * self.scaling, 
+                self.player_ui_main_top_left[x][1] - self.panel_height*0.2,
+                16 * self.scaling,
+                26 * self.scaling,
+                (150, 150, 150, 100),
+                border_width=2,
+                filled=False,
+            ))
+            self.player_ui_main_shapes.append(arcade.create_rectangle(
+                self.player_ui_main_top_left[x][0] + 23 * self.scaling, 
+                self.player_ui_main_top_left[x][1] - self.panel_height*0.5,
+                16 * self.scaling,
+                26 * self.scaling,
+                (150, 150, 150, 100),
+                border_width=2,
+                filled=False,
+            ))
+            self.player_ui_main_shapes.append(arcade.create_rectangle(
+                self.player_ui_main_top_left[x][0] + 23 * self.scaling, 
+                self.player_ui_main_top_left[x][1] - self.panel_height*0.8,
+                16 * self.scaling,
+                26 * self.scaling,
+                (150, 150, 150, 100),
+                border_width=2,
+                filled=False,
+            ))
         self.duration_backing_bar = arcade.create_rectangle_filled(self.L_MARG + self.PLAYABLE_WIDTH / 2, self.s_height - 5 * self.scaling - (self.T_MARG - 10 * self.scaling) /2, self.PLAYABLE_WIDTH * 0.9, (self.T_MARG - 10 * self.scaling), (10, 10, 10))
         self.show_winner = False
+
+    def draw_player_ui_main_under(self, hill, energy, health):
+        for x in range(len(energy)):
+            arcade.draw_text("W", self.player_ui_main_top_left[x][0] + 15 * self.scaling, self.player_ui_main_top_left[x][1] - self.panel_height*0.8, font_size=11 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="center", width=16 * self.scaling, anchor_y="center")
+            arcade.draw_text("F", self.player_ui_main_top_left[x][0] + 15 * self.scaling, self.player_ui_main_top_left[x][1] - self.panel_height*0.5, font_size=11 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="center", width=16 * self.scaling, anchor_y="center")
+            arcade.draw_text("S", self.player_ui_main_top_left[x][0] + 15 * self.scaling, self.player_ui_main_top_left[x][1] - self.panel_height*0.2, font_size=11 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="center", width=16 * self.scaling, anchor_y="center")
 
     def draw_player_ui_main(self, hill, energy, health):
         self.player_ui_main_shapes.draw()
         self.ui_player_list.draw()
         for x in range(len(energy)):
-            arcade.draw_text(str(hill[x]), self.player_ui_main_top_left[x][0] + 23 * self.scaling, self.player_ui_main_top_left[x][1] - self.panel_height*0.70, font_size=14 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf")
-            arcade.draw_text(str(energy[x]), self.player_ui_main_top_left[x][0] + 23 * self.scaling, self.player_ui_main_top_left[x][1] - self.panel_height*0.93, font_size=14 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf")
+            arcade.draw_text(str(hill[x]), self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.65, self.player_ui_main_top_left[x][1] - self.panel_height*0.70, font_size=14 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="right", width=self.player_ui_main_width*0.3, anchor_y="baseline")
+            arcade.draw_text(str(energy[x]), self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.65, self.player_ui_main_top_left[x][1] - self.panel_height*0.93, font_size=14 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="right", width=self.player_ui_main_width*0.3, anchor_y="baseline")
             pct = health[x] / stats.general.QUEEN_HEALTH
             total_width = self.player_ui_main_width - 2 * self.scaling
             arcade.draw_rectangle_filled(

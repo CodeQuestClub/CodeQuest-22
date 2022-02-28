@@ -166,7 +166,7 @@ def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, c
                             req.id = f"ant-{ant_ids[i]}"
                             ant_ids[i] += 1
                         klass = AntTypes.get_class(req.ant_type)
-                        ant_obj = klass(i, req.id, GlobalMap.player_spawns[i], req.cost, req.color or (0, 0, 0))
+                        ant_obj = klass(i, req.id, GlobalMap.player_spawns[i], req.cost, req.color or (0, 0, 0, 0))
                         if req.goal is not None:
                             try:
                                 ant_obj.set_goal(req.goal)

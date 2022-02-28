@@ -128,6 +128,7 @@ class Ant:
         self.position = position
         self.energy = energy
         self.previous_positions = []
+        self.dead = False
 
 ants = [{} for _ in range(4)]
 ant_ids = 0
@@ -302,6 +303,7 @@ def handle_events(events):
             if ev.player_index == my_index:
                 total_ants -= 1
                 ant = ants[my_index][ev.ant_id]
+                ant.dead = True
                 if ant.cur_allocation in production and ant.ant_type == AntTypes.WORKER:
                     allocated[production.index(ant.cur_allocation)] -= 1
                     ant.cur_allocation = None
@@ -360,12 +362,14 @@ def handle_events(events):
         elif isinstance(ev, DepositEvent):
             if ev.player_index == my_index:
                 if ev.ant_id not in ants[ev.player_index]: continue
+                if ants[ev.player_index][ev.ant_id].dead: continue
                 req.append(GoalRequest(ev.ant_id, allocate_production_zone(ants[ev.player_index][ev.ant_id])))
                 my_energy += ev.energy_amount
         elif isinstance(ev, ZoneActiveEvent):
             current_settled = ev.points
             settle_timer = ev.num_ticks
             for ant in ants[my_index].values():
+                if ant.dead: continue
                 if ant.ant_type == AntTypes.SETTLER:
                     req.append(GoalRequest(ant.ant_id, current_settled[0]))
         elif isinstance(ev, ZoneDeactivateEvent):

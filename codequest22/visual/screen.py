@@ -540,7 +540,7 @@ class ScreenManager(arcade.Window):
         self.ant_mapping = [{} for _ in range(len(images))]
         names = ["red", "blue", "yellow", "green"]
         for x, image in enumerate(images):
-            spritepath = resolve_path(image, "test_bots/img/codequest.png")
+            spritepath = resolve_path(image, os.path.join(os.path.dirname(os.path.dirname(__file__)), "codequest.png"))
             # UI
             ui_sprite = arcade.Sprite(spritepath, scale=self.scaling)
             ratio = ui_sprite.width / ui_sprite.height

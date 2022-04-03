@@ -1,6 +1,7 @@
 from codequest22.client.runner import BotRunner
 from codequest22.client.network import NetworkManager
 from traceback import format_exc
+import os.path
 
 def run_client(bot_path, send_queue, recv_queue, error_queue):
     try:
@@ -10,7 +11,7 @@ def run_client(bot_path, send_queue, recv_queue, error_queue):
         runner.load_bot(bot_path)
 
         team_name = runner.run_command("get_team_name", 0.5)
-        team_image = runner.run_command("get_team_image", 0.5)
+        team_image = os.path.join(bot_path, runner.run_command("get_team_image", 0.5))
         assert type(team_name) == str, f"Team name must be string, got {type(team_name)}."
         NetworkManager.send_obj({
             "type": "player_data",

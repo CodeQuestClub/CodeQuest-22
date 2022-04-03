@@ -49,8 +49,19 @@ class BotRunner:
         # Restart
         self.running = True
         self.over_elapsed = 0
-        from importlib.machinery import SourceFileLoader
-        module = SourceFileLoader("__not_main__", bot_path).load_module()
+        import importlib
+
+        import os.path
+        if os.path.isdir(bot_path):
+            spec = importlib.util.spec_from_file_location("", os.path.join(bot_path, "main.py"))
+            module = importlib.util.module_from_spec(spec)
+            import sys
+            sys.path.append(bot_path)
+            spec.loader.exec_module(module)
+        else:
+            spec = importlib.util.spec_from_file_location("", bot_path)
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
 
         for key, vital in self.FUNCTIONS:
             if hasattr(module, key):

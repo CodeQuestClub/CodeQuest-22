@@ -47,13 +47,11 @@ def main():
         # Resolve bot paths
         full_paths = [None]*len(args.players)
         for i, bot in enumerate(args.players):
-            if not bot.endswith(".py"):
-                bot = bot + ".py"
             full_paths[i] = os.path.join(called_from, bot)
-            if not os.path.isfile(full_paths[i]):
+            if not os.path.isfile(full_paths[i]) and not os.path.isdir(full_paths[i]):
                 full_paths[i] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'client', bot)
-            if not os.path.isfile(full_paths[i]):
-                raise ValueError(f"Could not find bot file {args.players[i]}")
+            if not os.path.isfile(full_paths[i]) and not os.path.isdir(full_paths[i]):
+                raise ValueError(f"Could not find bot file {bot}")
 
     # Resolve map and replay paths
     map_path = os.path.join(called_from, args.map)

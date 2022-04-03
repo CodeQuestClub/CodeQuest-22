@@ -540,11 +540,12 @@ class ScreenManager(arcade.Window):
         self.ant_mapping = [{} for _ in range(len(images))]
         names = ["red", "blue", "yellow", "green"]
         for x, image in enumerate(images):
-            spritepath = resolve_path(image, "test_bots/img/hello.png")
+            spritepath = resolve_path(image, "test_bots/img/codequest.png")
             # UI
             ui_sprite = arcade.Sprite(spritepath, scale=self.scaling)
             ratio = ui_sprite.width / ui_sprite.height
-            ui_sprite.height = self.player_sprite_height
+            max_height = min(self.player_sprite_height, self.player_sprite_width / ratio)
+            ui_sprite.height = max_height
             ui_sprite.width = ui_sprite.height * ratio
             ui_sprite.center_x = self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.75
             ui_sprite.center_y = self.player_ui_main_top_left[x][1] - self.player_sprite_height / 2
@@ -815,7 +816,8 @@ class ScreenManager(arcade.Window):
             (self.PLAYER_UI_MAIN_X_MARGIN, self.s_height - self.PLAYER_UI_MAIN_Y_MARGIN - (self.panel_height + self.panel_margins) * x)
             for x in range(n_players)
         ]
-        self.player_sprite_height = self.panel_height / 2
+        self.player_sprite_height = self.panel_height * 0.4
+        self.player_sprite_width = self.player_ui_main_width * 0.4
         for x in range(n_players):
             self.player_ui_main_shapes.append(arcade.create_rectangle_filled(
                 self.player_ui_main_top_left[x][0] + self.player_ui_main_width / 2,

@@ -29,7 +29,7 @@ class SpawnRequest(Request):
         self.cost = AntTypes.get_stats(self.ant_type).COST
     
     def get_args(self):
-        return [self.ant_type, self.id, self.color, self.goal, self.cost]
+        return [self.ant_type, self.id, self.color, self.goal]
 
 class GoalRequest(Request):
     

@@ -133,11 +133,11 @@ class AntTypes(Enum):
         raise ValueError(f"Unknown ant type {type}")
 
     def get_stats(type: "AntTypes"):
-        if type == AntTypes.WORKER:
+        if type == AntTypes.WORKER or str(type).strip("'") == "WORKER":
             return Worker
-        elif type == AntTypes.FIGHTER:
+        elif type == AntTypes.FIGHTER or str(type).strip("'") == "FIGHTER":
             return Fighter
-        elif type == AntTypes.SETTLER:
+        elif type == AntTypes.SETTLER or str(type).strip("'") == "SETTLER":
             return Settler
         raise ValueError(f"Unknown ant type {type}")
 

@@ -1,4 +1,4 @@
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 from codequest22.client import run_client
 import argparse, os
@@ -8,7 +8,7 @@ parser = argparse.ArgumentParser(description="Run the CodeQuest 2022 simulation.
 parser.add_argument(
     "players",
     type=str,
-    nargs="*",
+    nargs="+",
     help="Path to bot scripts for simulating, space separated. If this is 'replay', then it will attempt to play from a replay file instead.",
 )
 parser.add_argument(

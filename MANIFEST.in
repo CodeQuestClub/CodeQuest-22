@@ -2,3 +2,7 @@ global-include *.py
 global-include *.png
 global-include *.ttf
 global-include *.txt
+prune venv
+prune test_bots
+prune replays
+prune codequest22.egg-info

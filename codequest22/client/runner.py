@@ -49,7 +49,7 @@ class BotRunner:
         # Restart
         self.running = True
         self.over_elapsed = 0
-        import importlib
+        import importlib.util
 
         import os.path
         if os.path.isdir(bot_path):
@@ -61,6 +61,8 @@ class BotRunner:
         else:
             spec = importlib.util.spec_from_file_location("", bot_path)
             module = importlib.util.module_from_spec(spec)
+            import sys
+            sys.path.append(os.path.dirname(bot_path))
             spec.loader.exec_module(module)
 
         for key, vital in self.FUNCTIONS:

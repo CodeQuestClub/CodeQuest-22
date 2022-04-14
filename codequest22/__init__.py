@@ -1,4 +1,4 @@
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 from codequest22.client import run_client
 import argparse, os
@@ -118,8 +118,12 @@ def main():
             while True:
                 v = error_queue.get()
                 if isinstance(v, list) and isinstance(v[0], Exception):
-                    print(v[1])
-                    raise KeyboardInterrupt
+                    from codequest22.server.replay import ErrorManager
+                    error_path = replay_path.replace(".txt", ".error_log")
+                    ErrorManager.set_output(error_path, v[1])
+                    print(f"An error occured. Check {error_path}")
+                    close_everything()
+                    break                    
                 if isinstance(v, str) and v == "visual" and args.visual:
                     close_everything()
                     break
@@ -140,13 +144,21 @@ def main():
             while True:
                 v = error_queue.get()
                 if isinstance(v, list) and isinstance(v[0], Exception):
-                    print(v[1])
-                    raise KeyboardInterrupt
+                    from codequest22.server.replay import ErrorManager
+                    error_path = replay_path.replace(".txt", ".error_log")
+                    ErrorManager.set_output(error_path, v[1])
+                    print(f"An error occured. Check {error_path}")
+                    close_everything()
+                    break
                 if isinstance(v, str) and v == "visual":
                     close_everything()
                     break
         except KeyboardInterrupt:
             close_everything()     
         except Exception as e:
+            from codequest22.server.replay import ErrorManager
+            error_path = replay_path.replace(".txt", ".error_log")
+            ErrorManager.set_output(error_path, str(e))
+            print(f"An error occured. Check {error_path}")
             close_everything()
             raise e

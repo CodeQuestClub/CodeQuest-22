@@ -24,3 +24,10 @@ class ReplayManager:
     @classmethod
     def close(cls):
         cls.file.close()
+
+class ErrorManager:
+    
+    @classmethod
+    def write_error(cls, path, error_string):
+        cls.file = open(path, "w")
+        cls.file.write(error_string)

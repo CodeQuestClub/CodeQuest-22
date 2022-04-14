@@ -11,7 +11,10 @@ def run_client(bot_path, send_queue, recv_queue, error_queue):
         runner.load_bot(bot_path)
 
         team_name = runner.run_command("get_team_name", 0.5)
-        team_image = os.path.join(bot_path, runner.run_command("get_team_image", 0.5))
+        folder_path = bot_path
+        if folder_path.endswith(".py"):
+            folder_path = os.path.dirname(folder_path)
+        team_image = os.path.join(folder_path, runner.run_command("get_team_image", 0.5))
         assert type(team_name) == str, f"Team name must be string, got {type(team_name)}."
         NetworkManager.send_obj({
             "type": "player_data",

@@ -1,4 +1,4 @@
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 
 from codequest22.client import run_client
 import argparse, os
@@ -120,7 +120,7 @@ def main():
                 if isinstance(v, list) and isinstance(v[0], Exception):
                     from codequest22.server.replay import ErrorManager
                     error_path = replay_path.replace(".txt", ".error_log")
-                    ErrorManager.set_output(error_path, v[1])
+                    ErrorManager.write_error(error_path, v[1])
                     print(f"An error occured. Check {error_path}")
                     close_everything()
                     break                    
@@ -146,7 +146,7 @@ def main():
                 if isinstance(v, list) and isinstance(v[0], Exception):
                     from codequest22.server.replay import ErrorManager
                     error_path = replay_path.replace(".txt", ".error_log")
-                    ErrorManager.set_output(error_path, v[1])
+                    ErrorManager.write_error(error_path, v[1])
                     print(f"An error occured. Check {error_path}")
                     close_everything()
                     break
@@ -158,7 +158,7 @@ def main():
         except Exception as e:
             from codequest22.server.replay import ErrorManager
             error_path = replay_path.replace(".txt", ".error_log")
-            ErrorManager.set_output(error_path, str(e))
+            ErrorManager.write_error(error_path, str(e))
             print(f"An error occured. Check {error_path}")
             close_everything()
             raise e

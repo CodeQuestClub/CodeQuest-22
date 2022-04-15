@@ -649,12 +649,12 @@ class ScreenManager(arcade.Window):
         if self.position_info is not None:
             px, py = self.translate(*self.position_info)
             t = self.map_data[self.position_info[1]][self.position_info[0]]
-            if t == "P":
+            if t == "F":
                 tp = tuple(self.position_info[::-1])
                 for tile in GameStateHandler.energy_info:
                     if tile.position == tp:
                         text = [
-                            f"Production: {tile.amount}"
+                            f"Food: {tile.amount}"
                         ]
                         break
                 else:

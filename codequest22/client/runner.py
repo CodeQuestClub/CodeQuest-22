@@ -27,10 +27,10 @@ class BotRunner:
 
     FUNCTIONS = [
         # name, and whether it is vital
-        ("get_team_name", True),
-        ("get_team_image", True),
-        ("read_map", True),
-        ("read_index", True),
+        ("get_team_name", False),
+        ("get_team_image", False),
+        ("read_map", False),
+        ("read_index", False),
         ("handle_events", False),
         ("handle_failed_requests", False),
     ]
@@ -39,7 +39,7 @@ class BotRunner:
         self.registry = {}
         self.fallback = {}
         self.fallback["get_team_name"] = lambda : "Timed out"
-        self.fallback["get_team_image"] = lambda : None
+        self.fallback["get_team_image"] = lambda : ""
         self.fallback["read_map"] = lambda _m, _m2: None
         self.fallback["read_index"] = lambda _i, _n: None
         self.fallback["handle_events"] = lambda _e: []
@@ -69,7 +69,10 @@ class BotRunner:
             if hasattr(module, key):
                 self.registry[key] = getattr(module, key)
             elif vital:
+                # We don't have a fallback
                 raise ValueError(f"Bot {bot_path} must implement method {key}")
+            else:
+                print(f"Bot {bot_path} really should implement method {key}. We've provided a default.")
 
     def run_command(self, function_name, limit, *args, **kwargs):
         if not self.running:

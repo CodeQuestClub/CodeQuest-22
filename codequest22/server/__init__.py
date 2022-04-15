@@ -1,3 +1,5 @@
+import os.path
+from os import getcwd
 import random
 from codequest22.server.events import *
 from codequest22.server.network import NetworkManager
@@ -94,10 +96,12 @@ def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, c
         player_health = [stats.general.QUEEN_HEALTH for d in player_data]
         defeated = [False for d in player_data]
         hill_score = [0 for _ in player_data]
+        # Remove cwd from absolute paths
+        image_names = [os.path.relpath(d["image"], getcwd()) for d in player_data]
         NetworkManager.send_internal_obj({
             "type": "player_data", 
             "names": [d["name"] for d in player_data], 
-            "images": [d["image"] for d in player_data],
+            "images": image_names,
             "energy": player_energy,
             "hill": hill_score,
             "health": player_health,

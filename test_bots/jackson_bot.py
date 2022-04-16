@@ -11,9 +11,6 @@ DEBUG = True
 def get_team_name():
     return f"Jackson"
 
-def get_team_image():
-    return "test_bots/img/hello.png"
-
 my_index = None
 def read_index(player_index, n_players):
     global my_index

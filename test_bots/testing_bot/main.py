@@ -6,12 +6,9 @@ from codequest22.server.ant import AntTypes
 from codequest22 import stats
 from heapq import heappop, heappush
 
-from my_local_import import get_team_image
+from my_local_import import get_team_name
 
 DEBUG = True
-
-def get_team_name():
-    return f"Jackson"
 
 my_index = None
 def read_index(player_index, n_players):

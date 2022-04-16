@@ -80,11 +80,6 @@ BOT_STATE = BotState(
 def get_team_name() -> str:
     return "MolarFox"
 
-
-def get_team_image() -> str:
-    return "molarfox_bot/img/hayseed_watface.png"
-
-
 def read_index(player_index, n_players) -> None:
     BOT_STATE.player_index = player_index
     BOT_STATE.map_info.total_players = n_players

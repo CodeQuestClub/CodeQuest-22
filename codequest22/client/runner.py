@@ -28,7 +28,6 @@ class BotRunner:
     FUNCTIONS = [
         # name, and whether it is vital
         ("get_team_name", False),
-        ("get_team_image", False),
         ("read_map", False),
         ("read_index", False),
         ("handle_events", False),
@@ -39,7 +38,6 @@ class BotRunner:
         self.registry = {}
         self.fallback = {}
         self.fallback["get_team_name"] = lambda : "Timed out"
-        self.fallback["get_team_image"] = lambda : ""
         self.fallback["read_map"] = lambda _m, _m2: None
         self.fallback["read_index"] = lambda _i, _n: None
         self.fallback["handle_events"] = lambda _e: []

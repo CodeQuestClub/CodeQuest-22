@@ -1,2 +1,2 @@
-def get_team_image():
-    return "celeste.PNG"
+def get_team_name():
+    return "Me Me Me"

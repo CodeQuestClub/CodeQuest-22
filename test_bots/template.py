@@ -8,10 +8,6 @@ def get_team_name() -> str:
     """Returns the name of your team as a short string."""
     return "???"
 
-def get_team_image() -> str:
-    """Returns the relative path of your team's banner image. Shown in the game interface."""
-    return "placeholder.png"
-
 def read_index(player_index: int, n_players: int) -> None:
     """
     Reads the total number of players and your index within that list.

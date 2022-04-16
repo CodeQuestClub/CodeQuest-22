@@ -1,5 +1,7 @@
 import json
+import progressbar
 from codequest22.server.replay import ReplayManager
+import codequest22.stats as stats
 
 class CustomEncoder(json.JSONEncoder):
 
@@ -18,6 +20,8 @@ class NetworkManager:
         cls.recv_queue = recv_queue
         cls.queues = queues
         cls.is_visual = is_visual
+        cls.bar = progressbar.ProgressBar(widgets=[progressbar.Counter(format=f"%(value)d/{stats.general.SIMULATION_TICKS}"), progressbar.Bar()], max_value=stats.general.SIMULATION_TICKS).start()
+        cls.tick = 0
 
     @classmethod
     def send_internal_obj(cls, obj, visual=True, replay=True):
@@ -25,6 +29,11 @@ class NetworkManager:
             cls.visual_queue.put(obj)
         if replay:
             ReplayManager.write_line(json.dumps(obj, cls=CustomEncoder))
+        if obj["type"] == "tick":
+            cls.tick += 1
+            cls.bar.update(cls.tick)
+        elif obj["type"] == "winner":
+            cls.bar.finish()
 
     @classmethod
     def wait_visual_response(cls):

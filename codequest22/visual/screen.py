@@ -45,7 +45,7 @@ class AntCard(arcade.AnimatedTimeBasedSprite):
         self.forwards = True
         self.angle = 0
         self.center_x, self.center_y = self.start_pos
-        tex = arcade.load_texture(resolve_path(f"codequest22/visual/sprites/cards/{team_name}-{ant_type}.jpg"))
+        tex = arcade.load_texture(resolve_path(f(f"sprites/cards/{team_name}-{ant_type}.jpg")))
         self.frames.append(arcade.AnimationKeyframe(0, 100, tex))
 
     def update_animation(self, dt=1/60):
@@ -133,13 +133,13 @@ class ScreenManager(arcade.Window):
         self.position_info_text = []
         self.emitters = []
 
-        self.deposit_energy_sound = arcade.load_sound("codequest22/visual/sounds/deposit_energy.wav")
-        self.energy_active_sound = arcade.load_sound("codequest22/visual/sounds/energy_active.wav")
-        self.energy_deactive_sound = arcade.load_sound("codequest22/visual/sounds/energy_deactive.wav")
-        self.game_complete_sound = arcade.load_sound("codequest22/visual/sounds/game_complete.wav")
-        self.kill_sound = arcade.load_sound("codequest22/visual/sounds/kill.wav")
-        self.settler_active_sound = arcade.load_sound("codequest22/visual/sounds/settler_active.wav")
-        self.settler_deactive_sound = arcade.load_sound("codequest22/visual/sounds/settler_deactive.wav")
+        self.deposit_energy_sound = arcade.load_sound(f("sounds/deposit_energy.wav"))
+        self.energy_active_sound = arcade.load_sound(f("sounds/energy_active.wav"))
+        self.energy_deactive_sound = arcade.load_sound(f("sounds/energy_deactive.wav"))
+        self.game_complete_sound = arcade.load_sound(f("sounds/game_complete.wav"))
+        self.kill_sound = arcade.load_sound(f("sounds/kill.wav"))
+        self.settler_active_sound = arcade.load_sound(f("sounds/settler_active.wav"))
+        self.settler_deactive_sound = arcade.load_sound(f("sounds/settler_deactive.wav"))
 
     def spawnAnt(self, ant):
 
@@ -252,7 +252,7 @@ class ScreenManager(arcade.Window):
                         (17*0, 17*1),
                     ])
                     self.after_grid.append(arcade.Sprite(
-                        "codequest22/visual/sprites/red-base.png",
+                        f("sprites/red-base.png"),
                         center_x = cx,
                         center_y = cy,
                         scale = self.scaling * 24/512
@@ -263,7 +263,7 @@ class ScreenManager(arcade.Window):
                         (17*0, 17*1),
                     ])
                     self.after_grid.append(arcade.Sprite(
-                        "codequest22/visual/sprites/blue-base.png",
+                        f("sprites/blue-base.png"),
                         center_x = cx,
                         center_y = cy,
                         scale = self.scaling * 24/512
@@ -274,7 +274,7 @@ class ScreenManager(arcade.Window):
                         (17*0, 17*1),
                     ])
                     self.after_grid.append(arcade.Sprite(
-                        "codequest22/visual/sprites/yellow-base.png",
+                        f("sprites/yellow-base.png"),
                         center_x = cx,
                         center_y = cy,
                         scale = self.scaling * 24/512
@@ -285,7 +285,7 @@ class ScreenManager(arcade.Window):
                         (17*0, 17*1),
                     ])
                     self.after_grid.append(arcade.Sprite(
-                        "codequest22/visual/sprites/green-base.png",
+                        f("sprites/green-base.png"),
                         center_x = cx,
                         center_y = cy,
                         scale = self.scaling * 24/512
@@ -364,7 +364,7 @@ class ScreenManager(arcade.Window):
                         (17*0, 17*1),
                     ])
                     self.after_grid.append(arcade.Sprite(
-                        "codequest22/visual/sprites/normal.png",
+                        f("sprites/normal.png"),
                         center_x = cx,
                         center_y = cy,
                         scale = self.scaling * 16/512
@@ -372,7 +372,7 @@ class ScreenManager(arcade.Window):
                     for i2, t in enumerate(GameStateHandler.energy_info):
                         if t.position == (y, x):
                             self.active_tile[i2].append(arcade.Sprite(
-                                "codequest22/visual/sprites/super.png",
+                                f("sprites/super.png"),
                                 center_x = cx,
                                 center_y = cy,
                                 scale = self.scaling * 16/512
@@ -463,7 +463,7 @@ class ScreenManager(arcade.Window):
                         a, b = (4*17, 3*17)
                 for p, l in before:
                     s = arcade.Sprite(
-                        "codequest22/visual/sprites/full_tileset.png", 
+                        f("sprites/full_tileset.png"), 
                         image_x=p, 
                         image_y=l, 
                         image_width=16, 
@@ -474,7 +474,7 @@ class ScreenManager(arcade.Window):
                     )
                     self.grid_bg.append(s)
                 s = arcade.Sprite(
-                    "codequest22/visual/sprites/full_tileset.png", 
+                    f("sprites/full_tileset.png"), 
                     image_x=a, 
                     image_y=b, 
                     image_width=16, 
@@ -488,7 +488,7 @@ class ScreenManager(arcade.Window):
                     for i in range(len(GameStateHandler.zones)):
                         if (y, x) in GameStateHandler.zones[i]:
                             s2 = arcade.Sprite(
-                                "codequest22/visual/sprites/full_tileset.png", 
+                                f("sprites/full_tileset.png"), 
                                 image_x=a, 
                                 image_y=b + 6*17, 
                                 image_width=16, 
@@ -500,7 +500,7 @@ class ScreenManager(arcade.Window):
                             self.active_grid_bg[i].append(s2)
                 for p, l in extra:
                     s = arcade.Sprite(
-                        "codequest22/visual/sprites/full_tileset.png", 
+                        f("sprites/full_tileset.png"), 
                         image_x=p, 
                         image_y=l, 
                         image_width=16, 
@@ -549,12 +549,12 @@ class ScreenManager(arcade.Window):
             ui_sprite.width = ui_sprite.height * ratio
             ui_sprite.center_x = self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.75
             ui_sprite.center_y = self.player_ui_main_top_left[x][1] - self.player_sprite_height / 2
-            hill = arcade.Sprite(f"codequest22/visual/sprites/{names[x]}-base.png", 
+            hill = arcade.Sprite(f(f"sprites/{names[x]}-base.png"), 
                 center_x=self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.5, 
                 center_y=self.player_ui_main_top_left[x][1] - self.panel_height * 0.64,
                 scale=self.scaling * 16/512,
             )
-            energy = arcade.Sprite("codequest22/visual/sprites/full_tileset.png", 
+            energy = arcade.Sprite(f("sprites/full_tileset.png"), 
                 image_x=0, 
                 image_y=17*6, 
                 image_width=16, 
@@ -573,7 +573,7 @@ class ScreenManager(arcade.Window):
             center_xy=position,
             emit_controller=arcade.EmitBurst(3),
             particle_factory=lambda emitter: arcade.FadeParticle(
-                filename_or_texture="codequest22/visual/sprites/energy_particle.png",
+                filename_or_texture=f("sprites/energy_particle.png"),
                 change_xy=arcade.rand_in_circle((0.0, 0.0), 1),
                 lifetime=random.uniform(0.3, 0.6),
                 scale=2,
@@ -588,7 +588,7 @@ class ScreenManager(arcade.Window):
             center_xy=position,
             emit_controller=arcade.EmitBurst(3),
             particle_factory=lambda emitter: arcade.FadeParticle(
-                filename_or_texture="codequest22/visual/sprites/old_age_particle.png" if old_age else "codequest22/visual/sprites/dead_particle.png",
+                filename_or_texture=f("sprites/old_age_particle.png") if old_age else f("sprites/dead_particle.png"),
                 change_xy=arcade.rand_in_circle((0.0, 0.0), 1),
                 lifetime=random.uniform(0.3, 0.6),
                 scale=2,
@@ -738,7 +738,7 @@ class ScreenManager(arcade.Window):
                 self.position_info_pane.draw() 
                 self.position_info_pane_2.draw() 
             for (px, py), line in self.position_info_text:
-                arcade.draw_text(line, px, py, font_size=10 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", color=(255, 255, 255))
+                arcade.draw_text(line, px, py, font_size=10 * self.scaling, font_name=f("fonts/Montserrat/Montserrat-Light.ttf"), color=(255, 255, 255))
         self.draw_player_ui_main(GameStateHandler.hill, GameStateHandler.energy, GameStateHandler.health)
 
     def on_key_press(self, symbol: int, modifiers: int):
@@ -874,9 +874,9 @@ class ScreenManager(arcade.Window):
 
     def draw_player_ui_main_under(self, hill, energy, health):
         for x in range(len(energy)):
-            arcade.draw_text("W", self.player_ui_main_top_left[x][0] + 15 * self.scaling, self.player_ui_main_top_left[x][1] - self.panel_height*0.8, font_size=11 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="center", width=16 * self.scaling, anchor_y="center")
-            arcade.draw_text("F", self.player_ui_main_top_left[x][0] + 15 * self.scaling, self.player_ui_main_top_left[x][1] - self.panel_height*0.5, font_size=11 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="center", width=16 * self.scaling, anchor_y="center")
-            arcade.draw_text("S", self.player_ui_main_top_left[x][0] + 15 * self.scaling, self.player_ui_main_top_left[x][1] - self.panel_height*0.2, font_size=11 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="center", width=16 * self.scaling, anchor_y="center")
+            arcade.draw_text("W", self.player_ui_main_top_left[x][0] + 15 * self.scaling, self.player_ui_main_top_left[x][1] - self.panel_height*0.8, font_size=11 * self.scaling, font_name=f("fonts/Montserrat/Montserrat-Light.ttf"), align="center", width=16 * self.scaling, anchor_y="center")
+            arcade.draw_text("F", self.player_ui_main_top_left[x][0] + 15 * self.scaling, self.player_ui_main_top_left[x][1] - self.panel_height*0.5, font_size=11 * self.scaling, font_name=f("fonts/Montserrat/Montserrat-Light.ttf"), align="center", width=16 * self.scaling, anchor_y="center")
+            arcade.draw_text("S", self.player_ui_main_top_left[x][0] + 15 * self.scaling, self.player_ui_main_top_left[x][1] - self.panel_height*0.2, font_size=11 * self.scaling, font_name=f("fonts/Montserrat/Montserrat-Light.ttf"), align="center", width=16 * self.scaling, anchor_y="center")
 
     def set_tab(self, tab_index):
         self.winner_tab = tab_index
@@ -894,8 +894,8 @@ class ScreenManager(arcade.Window):
         self.player_ui_main_shapes.draw()
         self.ui_player_list.draw()
         for x in range(len(energy)):
-            arcade.draw_text(str(hill[x]), self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.65, self.player_ui_main_top_left[x][1] - self.panel_height*0.70, font_size=14 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="right", width=self.player_ui_main_width*0.3, anchor_y="baseline")
-            arcade.draw_text(str(energy[x]), self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.65, self.player_ui_main_top_left[x][1] - self.panel_height*0.93, font_size=14 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="right", width=self.player_ui_main_width*0.3, anchor_y="baseline")
+            arcade.draw_text(str(hill[x]), self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.65, self.player_ui_main_top_left[x][1] - self.panel_height*0.70, font_size=14 * self.scaling, font_name=f("fonts/Montserrat/Montserrat-Light.ttf"), align="right", width=self.player_ui_main_width*0.3, anchor_y="baseline")
+            arcade.draw_text(str(energy[x]), self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.65, self.player_ui_main_top_left[x][1] - self.panel_height*0.93, font_size=14 * self.scaling, font_name=f("fonts/Montserrat/Montserrat-Light.ttf"), align="right", width=self.player_ui_main_width*0.3, anchor_y="baseline")
             pct = health[x] / stats.general.QUEEN_HEALTH
             total_width = self.player_ui_main_width - 2 * self.scaling
             arcade.draw_rectangle_filled(
@@ -909,7 +909,7 @@ class ScreenManager(arcade.Window):
         self.ui_player_list_energy_icon.draw()
         self.duration_backing_bar.draw()
         if GameStateHandler.cur_tick == 0:
-            arcade.draw_text("Waiting for precomputation", self.L_MARG + self.PLAYABLE_WIDTH * 0.125, self.s_height - 5 * self.scaling - (self.T_MARG - 10 * self.scaling) /2, font_size=14 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="center", width=self.PLAYABLE_WIDTH * 0.75, anchor_y="center")
+            arcade.draw_text("Waiting for precomputation", self.L_MARG + self.PLAYABLE_WIDTH * 0.125, self.s_height - 5 * self.scaling - (self.T_MARG - 10 * self.scaling) /2, font_size=14 * self.scaling, font_name=f("fonts/Montserrat/Montserrat-Light.ttf"), align="center", width=self.PLAYABLE_WIDTH * 0.75, anchor_y="center")
         else:
             dist = GameStateHandler.cur_tick / stats.general.SIMULATION_TICKS
             total = sum(GameStateHandler.hill)
@@ -926,7 +926,7 @@ class ScreenManager(arcade.Window):
                 for x in range(3):
                     base_color[x] += TEAM_COLORS[i][x] * ((vals[i] - base_line) / total)
             arcade.draw_rectangle_filled(self.L_MARG + self.PLAYABLE_WIDTH * 0.05 + self.PLAYABLE_WIDTH * 0.45 * dist, self.s_height - 5 * self.scaling - (self.T_MARG - 10 * self.scaling) /2, self.PLAYABLE_WIDTH * 0.9 * dist, (self.T_MARG - 10 * self.scaling), base_color)
-            arcade.draw_text(f"{GameStateHandler.cur_tick}/{stats.general.SIMULATION_TICKS}", self.L_MARG + self.PLAYABLE_WIDTH * 0.125, self.s_height - 5 * self.scaling - (self.T_MARG - 10 * self.scaling) /2, font_size=14 * self.scaling, font_name="codequest22/visual/fonts/Montserrat/Montserrat-Light.ttf", align="center", width=self.PLAYABLE_WIDTH * 0.75, anchor_y="center")
+            arcade.draw_text(f"{GameStateHandler.cur_tick}/{stats.general.SIMULATION_TICKS}", self.L_MARG + self.PLAYABLE_WIDTH * 0.125, self.s_height - 5 * self.scaling - (self.T_MARG - 10 * self.scaling) /2, font_size=14 * self.scaling, font_name=f("fonts/Montserrat/Montserrat-Light.ttf"), align="center", width=self.PLAYABLE_WIDTH * 0.75, anchor_y="center")
         if self.show_winner:
             self.winner_bg.draw()
             if self.winner_tab == 0:

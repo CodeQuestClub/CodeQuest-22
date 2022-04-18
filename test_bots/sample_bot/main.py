@@ -5,7 +5,7 @@ from codequest22.server.requests import GoalRequest, SpawnRequest
 
 
 def get_team_name():
-    return f"Jackson"
+    return f"Sample Bot"
 
 my_index = None
 def read_index(player_index, n_players):

@@ -392,7 +392,7 @@ def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, c
                 if not is_visual:
                     error_queue.put("server")
                 return
-            if len(defeated) - sum(defeated) <= 1:
+            if len(defeated) - sum(defeated) <= 1 and (len(defeated) != 1 or len(defeated) == sum(defeated)):
                 if sum(defeated) == len(defeated) - 1 and max(hill_score) != max(hill_score[i] for i in range(len(hill_score)) if not defeated[i]):
                     # Keep going
                     pass

@@ -14,9 +14,9 @@ with open(os.path.join(HERE, "requirements.txt")) as fid:
 from codequest22 import __version__
 
 setup(
-    name="oaisudoiajsdoiausd",
+    name="codequest22",
     version=__version__,
-    description="Game for XXXXX 2022",
+    description="Game for Code Quest 2022",
     long_description=README,
     long_description_content_type="text/markdown",
     python_requires=REQUIRES_PYTHON,

@@ -234,7 +234,7 @@ def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, c
                             if (
                                 (a.position[0] - v.position[0]) * (a.position[0] - v.position[0]) + 
                                 (a.position[1] - v.position[1]) * (a.position[1] - v.position[1])
-                            ) > attack_range:
+                            ) > attack_range * attack_range:
                                 to_remove.append(i2)
                             elif possible[i2][0] == i:
                                 to_remove.append(i2)
@@ -254,8 +254,8 @@ def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, c
                             for i2 in range(len(player_data)):
                                 if i != i2:
                                     dx = GlobalMap.player_spawns[i2][0] - v.position[0]
-                                    dy = GlobalMap.player_spawns[i2][0] - v.position[0]
-                                    if dx * dx + dy * dy <= attack_range:
+                                    dy = GlobalMap.player_spawns[i2][1] - v.position[1]
+                                    if dx * dx + dy * dy <= attack_range * attack_range:
                                         # Attack Queen
                                         player_health[i2] -= v.attack_damage * (v.num_attacks - count)
                                         player_health[i2] = max(player_health[i2], 0)

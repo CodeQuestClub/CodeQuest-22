@@ -262,9 +262,10 @@ def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, c
                                         ev = QueenAttackEvent(v, i2, player_health[i2])
                                         player_events.append(ev)
                                         server_events.append(ev)
-                                        if player_health[i2] <= 0:
+                                        if player_health[i2] <= 0 and not defeated[i2]:
                                             defeated[i2] = True
                                             hill_score[i] += hill_score[i2]
+                                            hill_score[i2] = 0
                                             ev2 = TeamDefeatedEvent(i2, i, hill_score[i])
                                             player_events.append(ev2)
                                             server_events.append(ev2)

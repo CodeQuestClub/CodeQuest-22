@@ -42,7 +42,7 @@ class GameStateHandler:
         cls.start_payload = get_input_wait()
         assert cls.start_payload["type"] == "map", "Wrong payload encountered in game."
         cls.map_defn = cls.start_payload["obj"]
-        cls.zones = cls.start_payload["zones"]
+        cls.zones = [[tuple(y) for y in z] for z in cls.start_payload["zones"]]
         cls.energy_info = cls.start_payload["energy_info"]
         cls.active_zones = [False for _ in cls.zones]
         cls.active_tiles = [False for _ in cls.energy_info]

@@ -151,7 +151,7 @@ class ZoneActiveEvent(Event):
     """
     def __init__(self, zone_index: int, num_ticks: int, points: list) -> None:
         self.zone_index = zone_index
-        self.points = points
+        self.points = [tuple(p) for p in points]
         self.num_ticks = num_ticks
 
     def get_args(self):
@@ -165,7 +165,7 @@ class ZoneDeactivateEvent(Event):
     """
     def __init__(self, zone_index: int, points: list) -> None:
         self.zone_index = zone_index
-        self.points = points
+        self.points = [tuple(p) for p in points]
 
     def get_args(self):
         return [self.zone_index, self.points]
@@ -179,7 +179,7 @@ class FoodTileActiveEvent(Event):
     * multiplier: The multiplier applied to all energy received from this tile. Currently always 2.
     """
     def __init__(self, pos: tuple, num_ticks: int, multiplier: int) -> None:
-        self.pos = pos
+        self.pos = tuple(pos)
         self.num_ticks = num_ticks
         self.multiplier = multiplier
 

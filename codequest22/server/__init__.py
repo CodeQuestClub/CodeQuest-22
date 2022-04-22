@@ -375,7 +375,7 @@ def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, c
             if cur_tick == stats.general.SIMULATION_TICKS or cur_tick - last_succeeded_request > 100:
                 NetworkManager.broadcast_obj({"type": "finish"})
                 for i in range(len(hill_score)):
-                    if defeated[i]:
+                    if player_health[i] <= 0:
                         hill_score[i] = 0
                 sorted_hill_score = list(sorted(hill_score))
                 cur_score = 100
@@ -387,7 +387,7 @@ def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, c
                 NetworkManager.send_internal_obj({
                     "type": "winner",
                     "indicies": [i for i in range(len(hill_score)) if hill_score[i] == max(hill_score)],
-                    "score": [score_map[hill_score[i]] for i in range(len(hill_score))]
+                    "score": [25 if player_health[i] <= 0 else score_map[hill_score[i]] for i in range(len(hill_score))]
                 })
                 ReplayManager.close()
                 if not is_visual:
@@ -400,7 +400,7 @@ def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, c
                 else:
                     # Game over.
                     for i in range(len(hill_score)):
-                        if defeated[i]:
+                        if player_health[i] <= 0:
                             hill_score[i] = 0
                     sorted_hill_score = list(sorted(hill_score))
                     cur_score = 100
@@ -412,7 +412,7 @@ def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, c
                     NetworkManager.send_internal_obj({
                         "type": "winner",
                         "indicies": [i for i in range(len(hill_score)) if hill_score[i] == max(hill_score)],
-                        "score": [score_map[hill_score[i]] for i in range(len(hill_score))]
+                        "score": [25 if player_health[i] <= 0 else score_map[hill_score[i]] for i in range(len(hill_score))]
                     })
                     ReplayManager.close()
                     if not is_visual:

@@ -1,4 +1,4 @@
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 from codequest22.client import run_client
 import argparse, os

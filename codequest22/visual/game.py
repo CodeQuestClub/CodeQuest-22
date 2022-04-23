@@ -113,6 +113,7 @@ class GameStateHandler:
                             cls.health[ev.queen_player_index] = ev.queen_hp
                         elif isinstance(ev, TeamDefeatedEvent):
                             cls.hill[ev.by_index] = ev.new_hill_score
+                            cls.hill[ev.defeated_index] = 0
                 elif res["type"] == "winner":
                     indicies = res["indicies"]
                     cls.CURRENT_MODE = cls.MODE_STOPPED

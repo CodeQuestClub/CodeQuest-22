@@ -257,12 +257,13 @@ def start_server(map_path, replay_path, recv_queue, visual_queue, error_queue, c
                                     dy = GlobalMap.player_spawns[i2][1] - v.position[1]
                                     if dx * dx + dy * dy <= attack_range * attack_range:
                                         # Attack Queen
+                                        cached_health = player_health[i2]
                                         player_health[i2] -= v.attack_damage * (v.num_attacks - count)
                                         player_health[i2] = max(player_health[i2], 0)
                                         ev = QueenAttackEvent(v, i2, player_health[i2])
                                         player_events.append(ev)
                                         server_events.append(ev)
-                                        if player_health[i2] <= 0 and not defeated[i2]:
+                                        if player_health[i2] <= 0 and cached_health > 0:
                                             defeated[i2] = True
                                             hill_score[i] += hill_score[i2]
                                             hill_score[i2] = 0

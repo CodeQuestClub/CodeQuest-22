@@ -894,6 +894,7 @@ class ScreenManager(arcade.Window):
         self.player_ui_main_shapes.draw()
         self.ui_player_list.draw()
         for x in range(len(energy)):
+            arcade.draw_text(self.names[x][:13], self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.3, self.player_ui_main_top_left[x][1] - self.panel_height*0.50, font_size=9 * self.scaling, font_name=f("fonts/Montserrat/Montserrat-Light.ttf"), anchor_y="baseline")
             arcade.draw_text(str(hill[x]), self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.65, self.player_ui_main_top_left[x][1] - self.panel_height*0.70, font_size=14 * self.scaling, font_name=f("fonts/Montserrat/Montserrat-Light.ttf"), align="right", width=self.player_ui_main_width*0.3, anchor_y="baseline")
             arcade.draw_text(str(energy[x]), self.player_ui_main_top_left[x][0] + self.player_ui_main_width * 0.65, self.player_ui_main_top_left[x][1] - self.panel_height*0.93, font_size=14 * self.scaling, font_name=f("fonts/Montserrat/Montserrat-Light.ttf"), align="right", width=self.player_ui_main_width*0.3, anchor_y="baseline")
             pct = health[x] / stats.general.QUEEN_HEALTH
